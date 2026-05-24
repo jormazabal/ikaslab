@@ -34,6 +34,7 @@ export function VocabularyModule() {
   const [answer, setAnswer] = useState("");
   const [hintUsed, setHintUsed] = useState(false);
   const [feedback, setFeedback] = useState<string | null>(null);
+  const [feedbackCorrect, setFeedbackCorrect] = useState<boolean | null>(null);
   const [records, setRecords] = useState<AnswerRecord[]>([]);
   const [startedAt, setStartedAt] = useState<string>("");
   const [hintSeed, setHintSeed] = useState(0);
@@ -90,6 +91,7 @@ export function VocabularyModule() {
     setHintUsed(false);
     setHintSeed(0);
     setFeedback(null);
+    setFeedbackCorrect(null);
     setRecords([]);
     setStartedAt(new Date().toISOString());
     setPhase("playing");
@@ -101,6 +103,7 @@ export function VocabularyModule() {
     }
 
     const result = checkAnswer(answer, currentTerm, hintUsed);
+    setFeedbackCorrect(result.isCorrect);
     setRecords((current) => [
       ...current,
       {
@@ -126,6 +129,7 @@ export function VocabularyModule() {
       setHintUsed(false);
       setHintSeed((current) => current + 1);
       setFeedback(null);
+      setFeedbackCorrect(null);
       return;
     }
 
@@ -176,11 +180,11 @@ export function VocabularyModule() {
 
   if (phase === "playing" && currentTerm) {
     return (
-      <div className="space-y-5">
+      <div className="space-y-4">
         <div className="flex items-center justify-between gap-3">
           <div>
-            <p className="text-sm font-black uppercase text-panda-leaf">Vocabulario de inglés</p>
-            <h1 className="text-3xl font-black text-ink">Ronda panda</h1>
+            <p className="text-xs font-black uppercase tracking-wide text-manga-cyan">Vocabulario de inglés</p>
+            <h1 className="text-3xl font-black text-ink">Ronda de vocabulario</h1>
           </div>
           <Card className="px-5 py-3">
             <p className="text-xs font-bold text-slate-500">Puntuación</p>
@@ -196,6 +200,7 @@ export function VocabularyModule() {
           hintOptions={hintOptions}
           optionTranslations={optionTranslations}
           feedback={feedback}
+          feedbackCorrect={feedbackCorrect}
           onAnswerChange={setAnswer}
           onShowHint={() => {
             setHintSeed((current) => current + 1);
@@ -212,23 +217,23 @@ export function VocabularyModule() {
     const correct = records.filter((record) => record.correct).length;
     return (
       <Card className="mx-auto max-w-3xl text-center">
-        <div className="mx-auto mb-4 grid h-20 w-20 place-items-center rounded-3xl bg-panda-gold text-ink">
+        <div className="mx-auto mb-4 grid h-16 w-16 place-items-center rounded-2xl bg-slate-900 text-white">
           <Trophy size={42} />
         </div>
-        <h1 className="text-4xl font-black text-ink">Resumen de partida</h1>
-        <p className="mt-3 text-lg font-bold text-slate-600">
+        <h1 className="text-3xl font-black text-ink">Resumen de partida</h1>
+        <p className="mt-3 text-base font-bold text-slate-600">
           Has conseguido {score} puntos con {correct} aciertos de {records.length}.
         </p>
         <div className="mt-6 grid gap-3 sm:grid-cols-3">
-          <div className="rounded-3xl bg-panda-mint p-4">
+          <div className="rounded-2xl bg-cyan-50 p-4">
             <p className="text-sm font-bold text-emerald-800">Aciertos</p>
             <p className="text-3xl font-black text-ink">{correct}</p>
           </div>
-          <div className="rounded-3xl bg-panda-blush p-4">
+          <div className="rounded-2xl bg-rose-50 p-4">
             <p className="text-sm font-bold text-pink-800">Fallos</p>
             <p className="text-3xl font-black text-ink">{records.length - correct}</p>
           </div>
-          <div className="rounded-3xl bg-panda-sky p-4">
+          <div className="rounded-2xl bg-blue-50 p-4">
             <p className="text-sm font-bold text-sky-800">Pistas</p>
             <p className="text-3xl font-black text-ink">
               {records.filter((record) => record.hintUsed).length}
@@ -246,28 +251,34 @@ export function VocabularyModule() {
   }
 
   return (
-    <div className="space-y-8">
-      <section className="grid gap-5 lg:grid-cols-[1fr_320px]">
+    <div className="space-y-6">
+      <section className="grid gap-4 lg:grid-cols-[1fr_420px]">
         <div>
-          <p className="text-sm font-black uppercase text-panda-leaf">Idiomas</p>
-          <h1 className="text-4xl font-black text-ink">Vocabulario de inglés</h1>
-          <p className="mt-3 max-w-3xl text-lg font-bold leading-8 text-slate-600">
+          <p className="text-xs font-black uppercase tracking-wide text-manga-cyan">Idiomas</p>
+          <h1 className="text-3xl font-black text-ink">Vocabulario de inglés</h1>
+          <p className="mt-2 max-w-3xl text-base font-bold leading-7 text-slate-600">
             Elige bloques, completa frases con una palabra en inglés y usa pistas cuando lo
             necesites. Sin pista sumas más puntos.
           </p>
         </div>
-        <Card>
-          <p className="text-sm font-bold text-slate-500">Reglas</p>
-          <ul className="mt-3 space-y-2 text-sm font-black text-ink">
-            <li>Acierto sin pista: +3</li>
-            <li>Acierto con pista: +1</li>
-            <li>Fallo: -1</li>
-          </ul>
-          <Link to="/modules/english-vocabulary/settings" className="mt-5 block">
-            <Button variant="secondary" className="w-full" icon={<Settings size={18} />}>
-              Configurar vocabulario
-            </Button>
-          </Link>
+        <Card className="self-start p-3">
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="mr-1 text-xs font-black uppercase tracking-wide text-slate-500">Reglas</span>
+            <span className="rounded-full bg-cyan-50 px-3 py-1.5 text-xs font-black text-cyan-900">
+              Sin pista +3
+            </span>
+            <span className="rounded-full bg-amber-50 px-3 py-1.5 text-xs font-black text-amber-900">
+              Con pista +1
+            </span>
+            <span className="rounded-full bg-rose-50 px-3 py-1.5 text-xs font-black text-rose-900">
+              Fallo -1
+            </span>
+            <Link to="/modules/english-vocabulary/settings" className="ml-auto">
+              <Button variant="secondary" className="min-h-9 px-3 py-1.5" icon={<Settings size={16} />}>
+                Configurar vocabulario
+              </Button>
+            </Link>
+          </div>
         </Card>
       </section>
 

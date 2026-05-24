@@ -4,6 +4,7 @@ import { avatarCatalog } from "../../domain/avatars/avatarCatalog";
 import { validateUserInput } from "../../domain/users/userRules";
 import { useAppData } from "../providers/AppDataProvider";
 import { AvatarBadge } from "../../shared/ui/AvatarBadge";
+import { BrandLogo } from "../../shared/ui/BrandLogo";
 import { Button } from "../../shared/ui/Button";
 import { Card } from "../../shared/ui/Card";
 import { EmptyState } from "../../shared/ui/EmptyState";
@@ -31,16 +32,13 @@ export function ProfileSelectionPage() {
   }
 
   return (
-    <div className="min-h-screen panda-bg px-5 py-8">
+    <div className="min-h-screen manga-bg px-5 py-7">
       <div className="mx-auto max-w-6xl">
-        <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+        <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
           <div>
-            <div className="mb-4 inline-grid h-20 w-20 place-items-center rounded-[2rem] bg-ink text-5xl shadow-soft">
-              🐼
-            </div>
-            <h1 className="text-4xl font-black text-ink sm:text-5xl">IkasLab</h1>
-            <p className="mt-3 max-w-2xl text-lg font-bold text-slate-600">
-              Elige tu panda de aprendizaje y entra a tus retos educativos.
+            <BrandLogo size="lg" className="mb-4" />
+            <p className="mt-2 max-w-2xl text-base font-bold text-slate-600">
+              Elige tu perfil y continúa con tus módulos de aprendizaje.
             </p>
           </div>
           <Button icon={<Plus size={18} />} onClick={() => setShowCreate(true)}>
@@ -53,7 +51,7 @@ export function ProfileSelectionPage() {
             {users.length === 0 ? (
               <EmptyState
                 title="Aún no hay usuarios"
-                description="Crea el primer perfil infantil para guardar puntos, progreso e histórico."
+                description="Crea el primer perfil para guardar puntos, progreso e histórico."
               />
             ) : (
               <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
@@ -61,10 +59,10 @@ export function ProfileSelectionPage() {
                   <button
                     key={user.id}
                     onClick={() => void selectUser(user.id)}
-                    className="rounded-3xl border border-white bg-white/86 p-5 text-left shadow-soft transition hover:-translate-y-1 focus-visible:focus-ring"
+                    className="rounded-2xl border border-manga-line bg-white/90 p-4 text-left shadow-soft transition hover:-translate-y-1 focus-visible:focus-ring"
                   >
                     <AvatarBadge avatarId={user.avatarId} size="lg" />
-                    <h2 className="mt-4 text-2xl font-black text-ink">{user.name}</h2>
+                    <h2 className="mt-3 text-xl font-black text-ink">{user.name}</h2>
                     <p className="mt-1 text-sm font-bold text-slate-500">{user.totalPoints} puntos</p>
                   </button>
                 ))}
@@ -75,7 +73,7 @@ export function ProfileSelectionPage() {
           {showCreate && (
             <Card>
               <div className="mb-5 flex items-center gap-3">
-                <div className="grid h-12 w-12 place-items-center rounded-2xl bg-panda-mint text-panda-night">
+                <div className="grid h-11 w-11 place-items-center rounded-xl bg-slate-900 text-white">
                   <UserRound size={24} />
                 </div>
                 <div>
@@ -90,8 +88,8 @@ export function ProfileSelectionPage() {
                   <input
                     value={name}
                     onChange={(event) => setName(event.target.value)}
-                    className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 font-bold outline-none focus:focus-ring"
-                    placeholder="Nombre del niño"
+                    className="w-full rounded-xl border border-manga-line bg-white px-4 py-2.5 font-bold outline-none focus:focus-ring"
+                    placeholder="Nombre"
                   />
                 </label>
 
@@ -103,7 +101,7 @@ export function ProfileSelectionPage() {
                         key={avatar.id}
                         type="button"
                         onClick={() => setAvatarId(avatar.id)}
-                        className="rounded-2xl border border-slate-200 bg-white p-3 text-left transition hover:border-panda-leaf focus-visible:focus-ring"
+                        className="rounded-xl border border-manga-line bg-white p-3 text-left transition hover:border-manga-cyan focus-visible:focus-ring"
                       >
                         <AvatarBadge avatarId={avatar.id} selected={avatarId === avatar.id} />
                         <p className="mt-2 text-sm font-black text-ink">{avatar.name}</p>

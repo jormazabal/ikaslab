@@ -1,10 +1,12 @@
-import { HelpCircle, Send } from "lucide-react";
+import { clsx } from "clsx";
+import { Check, HelpCircle, Send } from "lucide-react";
 import { FormEvent, useCallback, useEffect, useRef, useState } from "react";
 import { Button } from "../../../shared/ui/Button";
 import { Card } from "../../../shared/ui/Card";
 import type { VocabularyTerm } from "../domain/types";
 
-const AUTO_CONTINUE_SECONDS = 10;
+const CORRECT_AUTO_CONTINUE_SECONDS = 10;
+const WRONG_AUTO_CONTINUE_SECONDS = 20;
 
 interface QuestionCardProps {
   term: VocabularyTerm;
@@ -15,6 +17,7 @@ interface QuestionCardProps {
   hintOptions: string[];
   optionTranslations: Record<string, string | null | undefined>;
   feedback: string | null;
+  feedbackCorrect: boolean | null;
   onAnswerChange: (answer: string) => void;
   onShowHint: () => void;
   onSubmit: () => void;
@@ -30,14 +33,17 @@ export function QuestionCard({
   hintOptions,
   optionTranslations,
   feedback,
+  feedbackCorrect,
   onAnswerChange,
   onShowHint,
   onSubmit,
   onContinue,
 }: QuestionCardProps) {
-  const [secondsLeft, setSecondsLeft] = useState(AUTO_CONTINUE_SECONDS);
+  const autoContinueSeconds = feedbackCorrect === false ? WRONG_AUTO_CONTINUE_SECONDS : CORRECT_AUTO_CONTINUE_SECONDS;
+  const [secondsLeft, setSecondsLeft] = useState(autoContinueSeconds);
   const hasContinuedRef = useRef(false);
-  const sentenceTranslation = hintUsed ? term.translation?.trim() : "";
+  const showTranslations = hintUsed || (Boolean(feedback) && feedbackCorrect === false);
+  const sentenceTranslation = showTranslations ? term.translation?.trim() : "";
 
   const continueOnce = useCallback(() => {
     if (hasContinuedRef.current) {
@@ -51,25 +57,25 @@ export function QuestionCard({
   useEffect(() => {
     if (!feedback) {
       hasContinuedRef.current = false;
-      setSecondsLeft(AUTO_CONTINUE_SECONDS);
+      setSecondsLeft(autoContinueSeconds);
       return undefined;
     }
 
     hasContinuedRef.current = false;
-    setSecondsLeft(AUTO_CONTINUE_SECONDS);
+    setSecondsLeft(autoContinueSeconds);
 
     const intervalId = window.setInterval(() => {
       setSecondsLeft((current) => Math.max(0, current - 1));
     }, 1000);
     const timeoutId = window.setTimeout(() => {
       continueOnce();
-    }, AUTO_CONTINUE_SECONDS * 1000);
+    }, autoContinueSeconds * 1000);
 
     return () => {
       window.clearInterval(intervalId);
       window.clearTimeout(timeoutId);
     };
-  }, [continueOnce, feedback]);
+  }, [autoContinueSeconds, continueOnce, feedback]);
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -83,8 +89,8 @@ export function QuestionCard({
 
   return (
     <Card className="mx-auto max-w-3xl">
-      <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
-        <span className="rounded-full bg-panda-sky px-4 py-2 text-sm font-black text-panda-night">
+      <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+        <span className="rounded-full bg-cyan-50 px-4 py-2 text-sm font-black text-slate-800">
           Pregunta {index + 1} de {total}
         </span>
         <span className="rounded-full bg-slate-100 px-4 py-2 text-sm font-black text-slate-600">
@@ -92,41 +98,46 @@ export function QuestionCard({
         </span>
       </div>
 
-      <p className="text-3xl font-black leading-tight text-ink">{term.sentence}</p>
+      <p className="text-xl font-black leading-tight text-ink sm:text-2xl">{term.sentence}</p>
       {sentenceTranslation && (
-        <p className="mt-3 rounded-2xl bg-panda-gold/35 px-4 py-3 text-sm font-light text-amber-900">
+        <p className="mt-3 rounded-xl bg-amber-50 px-4 py-3 text-sm font-light text-amber-900">
           {sentenceTranslation}
         </p>
       )}
 
-      <form onSubmit={handleSubmit} className="mt-6 space-y-4">
-        <input
-          value={answer}
-          onChange={(event) => onAnswerChange(event.target.value)}
-          disabled={Boolean(feedback)}
-          className="w-full rounded-3xl border-2 border-slate-200 bg-white px-5 py-4 text-2xl font-black text-ink outline-none transition focus:border-panda-leaf"
-          placeholder="Escribe la palabra"
-          autoFocus
-        />
+      <form onSubmit={handleSubmit} className="mt-4 space-y-4">
+        <div className="flex flex-wrap gap-2" role="group" aria-label="Opciones de respuesta">
+          {hintOptions.map((option) => {
+            const isSelected = answer === option;
 
-        <div className="rounded-3xl bg-slate-50 p-4">
-          <p className="mb-3 text-sm font-black text-slate-600">Opciones</p>
-          <div className="flex flex-wrap gap-2">
-            {hintOptions.map((option) => (
+            return (
               <button
                 key={option}
                 type="button"
                 disabled={Boolean(feedback)}
+                aria-pressed={isSelected}
                 onClick={() => onAnswerChange(option)}
-                className="rounded-full bg-white px-4 py-2 text-sm text-ink shadow-sm transition hover:-translate-y-0.5 disabled:opacity-70"
+                className={clsx(
+                  "inline-flex min-h-10 items-center gap-2 rounded-full border px-4 py-2 text-sm text-ink shadow-sm transition hover:-translate-y-0.5 focus-visible:focus-ring disabled:opacity-80",
+                  isSelected
+                    ? "border-manga-cyan bg-slate-900 text-white ring-2 ring-manga-cyan/45"
+                    : "border-manga-line bg-white hover:border-manga-cyan",
+                )}
               >
+                {isSelected && (
+                  <span className="grid h-5 w-5 place-items-center rounded-full bg-manga-cyan text-white">
+                    <Check size={14} strokeWidth={3} aria-hidden />
+                  </span>
+                )}
                 <span className="font-black">{option}</span>
-                {hintUsed && optionTranslations[option] && (
-                  <span className="font-light text-slate-500"> / {optionTranslations[option]}</span>
+                {showTranslations && optionTranslations[option] && (
+                  <span className={clsx("font-light", isSelected ? "text-white/75" : "text-slate-500")}>
+                    / {optionTranslations[option]}
+                  </span>
                 )}
               </button>
-            ))}
-          </div>
+            );
+          })}
         </div>
 
         <div className="flex flex-wrap items-center gap-3">
@@ -136,16 +147,17 @@ export function QuestionCard({
             </Button>
           )}
           {feedback && (
-            <div className="min-h-12 flex-1 rounded-3xl bg-panda-mint px-5 py-3 text-base font-black text-emerald-900">
+            <div className="min-h-11 flex-1 rounded-2xl bg-cyan-50 px-5 py-3 text-base font-black text-cyan-900">
               {feedback}
             </div>
           )}
           <Button
             type="submit"
+            disabled={!feedback && answer.trim().length === 0}
             className={feedback ? "min-w-48 justify-between" : undefined}
             icon={
               feedback ? (
-                <CountdownCircle secondsLeft={secondsLeft} totalSeconds={AUTO_CONTINUE_SECONDS} />
+                <CountdownCircle secondsLeft={secondsLeft} totalSeconds={autoContinueSeconds} />
               ) : (
                 <Send size={18} />
               )

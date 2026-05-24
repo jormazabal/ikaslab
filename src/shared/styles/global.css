@@ -3,8 +3,8 @@
 @tailwind utilities;
 
 :root {
-  color: #26323d;
-  background: #f9fbff;
+  color: #18202c;
+  background: #f7f8fb;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
@@ -29,14 +29,16 @@ select {
   font: inherit;
 }
 
+.manga-bg,
 .panda-bg {
   background:
-    radial-gradient(circle at 15% 18%, rgba(255, 224, 234, 0.75), transparent 28%),
-    radial-gradient(circle at 86% 12%, rgba(223, 242, 255, 0.8), transparent 25%),
-    linear-gradient(135deg, #fffaf2 0%, #f5fbff 47%, #fff7fb 100%);
+    linear-gradient(90deg, rgba(24, 32, 44, 0.04) 1px, transparent 1px),
+    linear-gradient(180deg, rgba(24, 32, 44, 0.04) 1px, transparent 1px),
+    linear-gradient(135deg, #f8fafc 0%, #f2f7fb 48%, #fff8f6 100%);
+  background-size: 32px 32px, 32px 32px, auto;
 }
 
 .focus-ring {
-  outline: 3px solid rgba(82, 183, 136, 0.35);
-  outline-offset: 3px;
+  outline: 2px solid rgba(34, 211, 238, 0.55);
+  outline-offset: 2px;
 }

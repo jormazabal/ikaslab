@@ -58,10 +58,10 @@ export function UpdateNotifier() {
   }
 
   return (
-    <div className="fixed bottom-5 right-5 z-50 w-[min(92vw,420px)] rounded-3xl border border-white bg-white/95 p-5 shadow-soft backdrop-blur">
+    <div className="fixed bottom-5 right-5 z-50 w-[min(92vw,420px)] rounded-2xl border border-manga-line bg-white/95 p-5 shadow-soft backdrop-blur">
       <div className="flex items-start justify-between gap-3">
         <div className="flex gap-3">
-          <div className="grid h-12 w-12 place-items-center rounded-2xl bg-panda-mint text-emerald-900">
+          <div className="grid h-11 w-11 place-items-center rounded-xl bg-cyan-50 text-cyan-900">
             <RefreshCw size={22} />
           </div>
           <div>
@@ -85,19 +85,19 @@ export function UpdateNotifier() {
       {status.body && <p className="mt-3 text-sm font-semibold text-slate-500">{status.body}</p>}
 
       {installState === "installing" && (
-        <p className="mt-3 rounded-2xl bg-panda-sky px-4 py-2 text-sm font-black text-sky-900">
+        <p className="mt-3 rounded-xl bg-cyan-50 px-4 py-2 text-sm font-black text-cyan-900">
           Descargando actualización... {Math.round(downloadedBytes / 1024)} KB
         </p>
       )}
 
       {installState === "installed" && (
-        <p className="mt-3 rounded-2xl bg-panda-mint px-4 py-2 text-sm font-black text-emerald-900">
+        <p className="mt-3 rounded-xl bg-cyan-50 px-4 py-2 text-sm font-black text-cyan-900">
           Actualización instalada. Cierra y abre IkasLab para usar la nueva versión.
         </p>
       )}
 
       {installState === "error" && (
-        <p className="mt-3 rounded-2xl bg-red-50 px-4 py-2 text-sm font-black text-red-700">
+        <p className="mt-3 rounded-xl bg-red-50 px-4 py-2 text-sm font-black text-red-700">
           No se pudo instalar la actualización. Inténtalo de nuevo más tarde.
         </p>
       )}

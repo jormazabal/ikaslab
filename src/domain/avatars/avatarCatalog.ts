@@ -1,61 +1,69 @@
 import type { Avatar } from "./types";
+import arcaneUrl from "../../shared/assets/avatars/teen/arcane.webp";
+import analystUrl from "../../shared/assets/avatars/teen/analyst.webp";
+import cyberUrl from "../../shared/assets/avatars/teen/cyber.webp";
+import explorerUrl from "../../shared/assets/avatars/teen/explorer.webp";
+import kendoUrl from "../../shared/assets/avatars/teen/kendo.webp";
+import orbitUrl from "../../shared/assets/avatars/teen/orbit.webp";
+import strikerUrl from "../../shared/assets/avatars/teen/striker.webp";
+import techNoirUrl from "../../shared/assets/avatars/teen/tech-noir.webp";
 
 export const avatarCatalog: Avatar[] = [
   {
     id: "panda-ninja",
-    name: "Panda ninja",
-    emoji: "🥷",
-    color: "from-slate-700 to-slate-500",
-    description: "Sigiloso y rápido.",
+    name: "Tech noir",
+    color: "from-slate-900 to-cyan-800",
+    imageUrl: techNoirUrl,
+    description: "Concentración discreta y mentalidad estratégica.",
   },
   {
     id: "panda-student",
-    name: "Panda estudiante",
-    emoji: "🎒",
-    color: "from-sky-400 to-cyan-300",
-    description: "Siempre preparado.",
+    name: "Analista",
+    color: "from-blue-900 to-slate-500",
+    imageUrl: analystUrl,
+    description: "Ordenado, preciso y constante.",
   },
   {
     id: "panda-astronaut",
-    name: "Panda astronauta",
-    emoji: "🚀",
-    color: "from-indigo-500 to-sky-400",
-    description: "Explora nuevas palabras.",
+    name: "Órbita",
+    color: "from-indigo-900 to-blue-500",
+    imageUrl: orbitUrl,
+    description: "Curiosidad científica y visión amplia.",
   },
   {
     id: "panda-samurai",
-    name: "Panda samurái",
-    emoji: "⚔️",
-    color: "from-red-400 to-orange-300",
-    description: "Concentración total.",
+    name: "Kendo",
+    color: "from-stone-900 to-red-700",
+    imageUrl: kendoUrl,
+    description: "Disciplina, foco y ritmo.",
   },
   {
     id: "panda-mage",
-    name: "Panda maga",
-    emoji: "🪄",
-    color: "from-fuchsia-400 to-pink-300",
-    description: "Aprende con magia.",
+    name: "Arcano",
+    color: "from-violet-900 to-fuchsia-700",
+    imageUrl: arcaneUrl,
+    description: "Creatividad e intuición.",
   },
   {
     id: "panda-footballer",
-    name: "Panda futbolista",
-    emoji: "⚽",
-    color: "from-emerald-400 to-lime-300",
-    description: "Juega en equipo.",
+    name: "Striker",
+    color: "from-red-900 to-orange-500",
+    imageUrl: strikerUrl,
+    description: "Energía, reflejos y constancia.",
   },
   {
     id: "panda-explorer",
-    name: "Panda exploradora",
-    emoji: "🧭",
-    color: "from-amber-400 to-yellow-300",
-    description: "Descubre retos.",
+    name: "Explorer",
+    color: "from-emerald-900 to-slate-600",
+    imageUrl: explorerUrl,
+    description: "Exploración, calma y autonomía.",
   },
   {
     id: "panda-robot",
-    name: "Panda robot",
-    emoji: "🤖",
-    color: "from-zinc-400 to-teal-300",
-    description: "Precisión brillante.",
+    name: "Cyber",
+    color: "from-slate-950 to-cyan-600",
+    imageUrl: cyberUrl,
+    description: "Precisión tecnológica.",
   },
 ];
 

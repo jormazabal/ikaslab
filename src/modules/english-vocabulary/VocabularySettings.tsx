@@ -147,7 +147,7 @@ export function VocabularySettings() {
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <p className="text-sm font-black uppercase text-panda-leaf">Configuración</p>
+          <p className="text-xs font-black uppercase tracking-wide text-manga-cyan">Configuración</p>
           <h1 className="text-3xl font-black text-ink">Vocabulario de inglés</h1>
         </div>
         <Link to="/modules/english-vocabulary">
@@ -175,7 +175,7 @@ export function VocabularySettings() {
           Restaurar inicial
         </Button>
         {message && (
-          <p className="flex items-center rounded-2xl bg-panda-mint px-4 py-2 text-sm font-black text-emerald-900">
+          <p className="flex items-center rounded-xl bg-cyan-50 px-4 py-2 text-sm font-black text-cyan-900">
             {message}
           </p>
         )}
@@ -195,10 +195,10 @@ export function VocabularySettings() {
                     setSelectedBlockId(block.id);
                     setTermDraft({ ...emptyTerm, blockId: block.id });
                   }}
-                  className={`w-full rounded-2xl border p-3 text-left transition ${
+                  className={`w-full rounded-xl border p-3 text-left transition ${
                     selectedBlockId === block.id
-                      ? "border-panda-leaf bg-panda-mint"
-                      : "border-slate-200 bg-white hover:border-panda-leaf"
+                      ? "border-manga-cyan bg-cyan-50"
+                      : "border-manga-line bg-white hover:border-manga-cyan"
                   }`}
                 >
                   <p className="font-black text-ink">{block.title}</p>
@@ -212,14 +212,14 @@ export function VocabularySettings() {
             <input
               value={blockDraft.title}
               onChange={(event) => setBlockDraft({ ...blockDraft, title: event.target.value })}
-              className="w-full rounded-2xl border border-slate-200 px-3 py-2 font-bold"
+              className="w-full rounded-xl border border-manga-line px-3 py-2 font-bold"
               placeholder="Título"
               required
             />
             <textarea
               value={blockDraft.description}
               onChange={(event) => setBlockDraft({ ...blockDraft, description: event.target.value })}
-              className="w-full rounded-2xl border border-slate-200 px-3 py-2 font-bold"
+              className="w-full rounded-xl border border-manga-line px-3 py-2 font-bold"
               placeholder="Descripción"
               required
             />
@@ -229,7 +229,7 @@ export function VocabularySettings() {
                 onChange={(event) =>
                   setBlockDraft({ ...blockDraft, difficulty: event.target.value as Difficulty })
                 }
-                className="rounded-2xl border border-slate-200 px-3 py-2 font-bold"
+                className="rounded-xl border border-manga-line px-3 py-2 font-bold"
               >
                 <option value="easy">easy</option>
                 <option value="medium">medium</option>
@@ -241,7 +241,7 @@ export function VocabularySettings() {
                 onChange={(event) =>
                   setBlockDraft({ ...blockDraft, orderIndex: Number(event.target.value) })
                 }
-                className="rounded-2xl border border-slate-200 px-3 py-2 font-bold"
+                className="rounded-xl border border-manga-line px-3 py-2 font-bold"
                 min={0}
               />
             </div>
@@ -271,24 +271,24 @@ export function VocabularySettings() {
             )}
           </div>
 
-          <form onSubmit={saveTerm} className="mt-5 grid gap-3 rounded-3xl bg-slate-50 p-4 lg:grid-cols-2">
+          <form onSubmit={saveTerm} className="mt-5 grid gap-3 rounded-2xl bg-slate-50 p-4 lg:grid-cols-2">
             <input
               value={termDraft.word}
               onChange={(event) => setTermDraft({ ...termDraft, word: event.target.value })}
-              className="rounded-2xl border border-slate-200 px-3 py-2 font-bold"
+              className="rounded-xl border border-manga-line px-3 py-2 font-bold"
               placeholder="Palabra correcta"
               required
             />
             <input
               value={termDraft.wordTranslation ?? ""}
               onChange={(event) => setTermDraft({ ...termDraft, wordTranslation: event.target.value })}
-              className="rounded-2xl border border-slate-200 px-3 py-2 font-bold"
+              className="rounded-xl border border-manga-line px-3 py-2 font-bold"
               placeholder="Traducción de la palabra"
             />
             <select
               value={termDraft.blockId || selectedBlockId}
               onChange={(event) => setTermDraft({ ...termDraft, blockId: event.target.value })}
-              className="rounded-2xl border border-slate-200 px-3 py-2 font-bold"
+              className="rounded-xl border border-manga-line px-3 py-2 font-bold"
               required
             >
               <option value="">Bloque</option>
@@ -301,20 +301,20 @@ export function VocabularySettings() {
             <input
               value={termDraft.sentence}
               onChange={(event) => setTermDraft({ ...termDraft, sentence: event.target.value })}
-              className="rounded-2xl border border-slate-200 px-3 py-2 font-bold lg:col-span-2"
+              className="rounded-xl border border-manga-line px-3 py-2 font-bold lg:col-span-2"
               placeholder="Frase con hueco ___"
               required
             />
             <input
               value={termDraft.translation ?? ""}
               onChange={(event) => setTermDraft({ ...termDraft, translation: event.target.value })}
-              className="rounded-2xl border border-slate-200 px-3 py-2 font-bold"
+              className="rounded-xl border border-manga-line px-3 py-2 font-bold"
               placeholder="Traducción de la frase con ___"
             />
             <input
               value={termDraft.hint ?? ""}
               onChange={(event) => setTermDraft({ ...termDraft, hint: event.target.value })}
-              className="rounded-2xl border border-slate-200 px-3 py-2 font-bold"
+              className="rounded-xl border border-manga-line px-3 py-2 font-bold"
               placeholder="Pista"
             />
             <input
@@ -325,7 +325,7 @@ export function VocabularySettings() {
                   distractors: event.target.value.split(",").map((item) => item.trim()),
                 })
               }
-              className="rounded-2xl border border-slate-200 px-3 py-2 font-bold lg:col-span-2"
+              className="rounded-xl border border-manga-line px-3 py-2 font-bold lg:col-span-2"
               placeholder="Distractores separados por coma"
               required
             />
@@ -346,7 +346,7 @@ export function VocabularySettings() {
               <button
                 key={term.id}
                 onClick={() => editTerm(term)}
-                className="rounded-2xl border border-slate-200 bg-white p-4 text-left transition hover:border-panda-leaf focus-visible:focus-ring"
+                className="rounded-xl border border-manga-line bg-white p-4 text-left transition hover:border-manga-cyan focus-visible:focus-ring"
               >
                 <p className="text-lg font-black text-ink">{term.word}</p>
                 <p className="mt-1 text-sm font-semibold text-slate-600">{term.sentence}</p>

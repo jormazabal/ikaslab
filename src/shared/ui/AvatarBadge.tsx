@@ -8,9 +8,9 @@ interface AvatarBadgeProps {
 }
 
 const sizes = {
-  sm: "h-12 w-12 text-2xl",
-  md: "h-16 w-16 text-3xl",
-  lg: "h-24 w-24 text-5xl",
+  sm: "h-11 w-11",
+  md: "h-14 w-14",
+  lg: "h-20 w-20",
 };
 
 export function AvatarBadge({ avatarId, size = "md", selected = false }: AvatarBadgeProps) {
@@ -19,14 +19,16 @@ export function AvatarBadge({ avatarId, size = "md", selected = false }: AvatarB
   return (
     <div
       className={clsx(
-        "grid shrink-0 place-items-center rounded-[1.35rem] bg-gradient-to-br text-white shadow-sm ring-offset-4",
+        "shrink-0 overflow-hidden rounded-2xl bg-gradient-to-br shadow-sm ring-offset-2",
         avatar?.color ?? "from-slate-400 to-slate-300",
         sizes[size],
-        selected && "ring-4 ring-panda-leaf",
+        selected && "ring-2 ring-manga-cyan",
       )}
       aria-label={avatar?.name ?? "Avatar"}
     >
-      <span aria-hidden>{avatar?.emoji ?? "🐼"}</span>
+      {avatar?.imageUrl && (
+        <img src={avatar.imageUrl} alt="" className="h-full w-full object-cover object-[center_28%]" aria-hidden />
+      )}
     </div>
   );
 }

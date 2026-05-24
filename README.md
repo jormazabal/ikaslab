@@ -2,7 +2,7 @@
 
 IkasLab es una aplicación educativa de escritorio para Windows 11 construida con Tauri v2, React, TypeScript, Vite, Rust, SQLite y Tailwind CSS.
 
-La primera versión incluye perfiles infantiles, avatares, puntos, histórico de partidas, catálogo modular y el módulo completo **Vocabulario de inglés**.
+La primera versión incluye perfiles para adolescentes, avatares manga, puntos, histórico de partidas, catálogo modular y el módulo completo **Vocabulario de inglés**.
 
 ## Desarrollo
 

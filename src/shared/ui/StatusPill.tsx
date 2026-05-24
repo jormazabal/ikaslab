@@ -8,8 +8,8 @@ const labels: Record<ModuleStatus, string> = {
 };
 
 const styles: Record<ModuleStatus, string> = {
-  active: "bg-panda-mint text-emerald-800",
-  "coming-soon": "bg-panda-gold text-amber-800",
+  active: "bg-cyan-50 text-cyan-800",
+  "coming-soon": "bg-amber-50 text-amber-800",
   disabled: "bg-slate-200 text-slate-600",
 };
 
