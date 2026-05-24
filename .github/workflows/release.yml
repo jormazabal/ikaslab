@@ -43,5 +43,5 @@ jobs:
           releaseBody: "Instalador Windows 11 y metadatos de actualización."
           releaseDraft: false
           prerelease: false
-          uploadUpdaterJson: true
+          includeUpdaterJson: true
           updaterJsonPreferNsis: true
