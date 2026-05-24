@@ -20,7 +20,12 @@ export function validateVocabularyPack(data: unknown): VocabularyPack {
 export const vocabularyContentService = {
   async ensureInitialContent(): Promise<void> {
     const current = await appRepository.getVocabularyPack();
-    if (current.blocks.length === 0 || current.terms.length === 0 || usesPreviousDefaultVocabulary(current)) {
+    if (
+      current.blocks.length === 0 ||
+      current.terms.length === 0 ||
+      usesPreviousDefaultVocabulary(current) ||
+      usesGenericVocabularySentences(current)
+    ) {
       await appRepository.replaceVocabulary(initialVocabularyPack);
     }
   },
@@ -76,4 +81,8 @@ function usesPreviousDefaultVocabulary(pack: VocabularyPack): boolean {
     pack.blocks.length === previousDefaultBlockIds.size &&
     Array.from(previousDefaultBlockIds).every((blockId) => currentBlockIds.has(blockId))
   );
+}
+
+function usesGenericVocabularySentences(pack: VocabularyPack): boolean {
+  return pack.terms.some((term) => term.sentence.includes("Complete this vocabulary"));
 }

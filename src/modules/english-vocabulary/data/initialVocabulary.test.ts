@@ -21,4 +21,12 @@ describe("initial vocabulary from document", () => {
       translation: null,
     });
   });
+
+  it("stores contextual example sentences with one missing word placeholder", () => {
+    for (const term of initialVocabularyPack.terms) {
+      expect(term.sentence).toContain("___");
+      expect(term.sentence).not.toContain("Complete this vocabulary");
+      expect(term.sentence.match(/___/g)).toHaveLength(1);
+    }
+  });
 });

@@ -101,8 +101,8 @@ export function VocabularyModule() {
     ]);
     setFeedback(
       result.isCorrect
-        ? `¡Correcto! ${result.points > 0 ? "+" : ""}${result.points} puntos`
-        : `Casi. La respuesta era "${currentTerm.word}". ${result.points} punto`,
+        ? `¡Correcto! ${formatSignedPoints(result.points)}`
+        : `Casi. La respuesta era "${currentTerm.word}". ${formatSignedPoints(result.points)}`,
     );
   }
 
@@ -268,4 +268,10 @@ export function VocabularyModule() {
       </div>
     </div>
   );
+}
+
+function formatSignedPoints(points: number): string {
+  const sign = points > 0 ? "+" : "";
+  const label = Math.abs(points) === 1 ? "punto" : "puntos";
+  return `${sign}${points} ${label}`;
 }
