@@ -13,6 +13,7 @@ export interface VocabularyTerm {
   id: string;
   blockId: string;
   word: string;
+  wordTranslation?: string | null;
   sentence: string;
   translation?: string | null;
   hint?: string | null;

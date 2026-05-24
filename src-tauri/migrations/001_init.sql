@@ -60,6 +60,7 @@ CREATE TABLE IF NOT EXISTS vocabulary_terms (
   id TEXT PRIMARY KEY,
   block_id TEXT NOT NULL,
   word TEXT NOT NULL,
+  word_translation TEXT,
   sentence TEXT NOT NULL,
   translation TEXT,
   hint TEXT,

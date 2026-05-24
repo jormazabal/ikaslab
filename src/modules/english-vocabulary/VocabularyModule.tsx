@@ -36,6 +36,7 @@ export function VocabularyModule() {
   const [feedback, setFeedback] = useState<string | null>(null);
   const [records, setRecords] = useState<AnswerRecord[]>([]);
   const [startedAt, setStartedAt] = useState<string>("");
+  const [hintSeed, setHintSeed] = useState(0);
 
   useEffect(() => {
     void vocabularyContentService.getSnapshot().then((loaded) => {
@@ -57,8 +58,19 @@ export function VocabularyModule() {
       return [];
     }
 
-    return buildHintOptions(currentTerm, snapshot.terms);
-  }, [currentTerm, snapshot]);
+    return buildHintOptions(currentTerm, snapshot.terms, 5, `${currentTerm.id}-${hintSeed}`);
+  }, [currentTerm, hintSeed, snapshot]);
+
+  const optionTranslations = useMemo(() => {
+    if (!snapshot) {
+      return {};
+    }
+
+    return snapshot.terms.reduce<Record<string, string | null | undefined>>((translations, term) => {
+      translations[term.word] = term.wordTranslation;
+      return translations;
+    }, {});
+  }, [snapshot]);
 
   function toggleBlock(blockId: string) {
     setSelectedBlocks((current) =>
@@ -76,6 +88,7 @@ export function VocabularyModule() {
     setQuestionIndex(0);
     setAnswer("");
     setHintUsed(false);
+    setHintSeed(0);
     setFeedback(null);
     setRecords([]);
     setStartedAt(new Date().toISOString());
@@ -111,6 +124,7 @@ export function VocabularyModule() {
       setQuestionIndex((index) => index + 1);
       setAnswer("");
       setHintUsed(false);
+      setHintSeed((current) => current + 1);
       setFeedback(null);
       return;
     }
@@ -180,9 +194,13 @@ export function VocabularyModule() {
           answer={answer}
           hintUsed={hintUsed}
           hintOptions={hintOptions}
+          optionTranslations={optionTranslations}
           feedback={feedback}
           onAnswerChange={setAnswer}
-          onShowHint={() => setHintUsed(true)}
+          onShowHint={() => {
+            setHintSeed((current) => current + 1);
+            setHintUsed(true);
+          }}
           onSubmit={submitAnswer}
           onContinue={continueGame}
         />

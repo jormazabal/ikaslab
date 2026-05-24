@@ -18,8 +18,17 @@ describe("initial vocabulary from document", () => {
     expect(initialVocabularyPack.terms[0]).toMatchObject({
       blockId: "module-1",
       word: "airline",
-      translation: null,
+      wordTranslation: "aerolínea",
+      translation: "La ___ perdió nuestra maleta después del vuelo.",
     });
+  });
+
+  it("stores Spanish translations for every word option and example sentence", () => {
+    for (const term of initialVocabularyPack.terms) {
+      expect(term.wordTranslation?.trim()).toBeTruthy();
+      expect(term.translation?.trim()).toBeTruthy();
+      expect(term.translation).toContain("___");
+    }
   });
 
   it("stores contextual example sentences with one missing word placeholder", () => {

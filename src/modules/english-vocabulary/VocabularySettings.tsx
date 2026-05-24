@@ -21,6 +21,7 @@ const emptyTerm: VocabularyTerm = {
   id: "",
   blockId: "",
   word: "",
+  wordTranslation: "",
   sentence: "",
   translation: "",
   hint: "",
@@ -81,6 +82,7 @@ export function VocabularySettings() {
     const term: VocabularyTerm = {
       ...termDraft,
       id: termDraft.id || `${termDraft.blockId}-${slugify(termDraft.word)}-${nanoid(5)}`,
+      wordTranslation: termDraft.wordTranslation?.trim() || null,
       distractors: termDraft.distractors.map((item) => item.trim()).filter(Boolean),
     };
     await vocabularyContentService.saveTerm(term);
@@ -277,6 +279,12 @@ export function VocabularySettings() {
               placeholder="Palabra correcta"
               required
             />
+            <input
+              value={termDraft.wordTranslation ?? ""}
+              onChange={(event) => setTermDraft({ ...termDraft, wordTranslation: event.target.value })}
+              className="rounded-2xl border border-slate-200 px-3 py-2 font-bold"
+              placeholder="Traducción de la palabra"
+            />
             <select
               value={termDraft.blockId || selectedBlockId}
               onChange={(event) => setTermDraft({ ...termDraft, blockId: event.target.value })}
@@ -301,7 +309,7 @@ export function VocabularySettings() {
               value={termDraft.translation ?? ""}
               onChange={(event) => setTermDraft({ ...termDraft, translation: event.target.value })}
               className="rounded-2xl border border-slate-200 px-3 py-2 font-bold"
-              placeholder="Traducción"
+              placeholder="Traducción de la frase con ___"
             />
             <input
               value={termDraft.hint ?? ""}

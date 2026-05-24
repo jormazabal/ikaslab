@@ -8,6 +8,7 @@ import { vocabularyPackSchema } from "../../modules/english-vocabulary/domain/vo
 import { appRepository } from "../persistence/appRepository";
 
 const previousDefaultBlockIds = new Set(["animals", "food", "school", "house", "clothes", "actions"]);
+const initialDocumentTermIds = new Set(initialVocabularyPack.terms.map((term) => term.id));
 
 export interface VocabularyContentSnapshot extends VocabularyPack {
   blockCounts: Record<string, number>;
@@ -24,7 +25,8 @@ export const vocabularyContentService = {
       current.blocks.length === 0 ||
       current.terms.length === 0 ||
       usesPreviousDefaultVocabulary(current) ||
-      usesGenericVocabularySentences(current)
+      usesGenericVocabularySentences(current) ||
+      bundledDocumentVocabularyNeedsSpanishHints(current)
     ) {
       await appRepository.replaceVocabulary(initialVocabularyPack);
     }
@@ -85,4 +87,18 @@ function usesPreviousDefaultVocabulary(pack: VocabularyPack): boolean {
 
 function usesGenericVocabularySentences(pack: VocabularyPack): boolean {
   return pack.terms.some((term) => term.sentence.includes("Complete this vocabulary"));
+}
+
+function bundledDocumentVocabularyNeedsSpanishHints(pack: VocabularyPack): boolean {
+  return (
+    pack.terms.length === initialDocumentTermIds.size &&
+    pack.terms.every((term) => initialDocumentTermIds.has(term.id)) &&
+    pack.terms.some(
+      (term) =>
+        !term.wordTranslation?.trim() ||
+        !term.translation?.trim() ||
+        term.wordTranslation === "airelinea" ||
+        term.wordTranslation === "guztitik alde egin",
+    )
+  );
 }

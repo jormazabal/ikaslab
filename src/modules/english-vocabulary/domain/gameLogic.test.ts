@@ -25,9 +25,18 @@ describe("english vocabulary game logic", () => {
   });
 
   it("generates hint with five unique options including the answer", () => {
-    const options = buildHintOptions(airline, initialVocabularyPack.terms);
+    const options = buildHintOptions(airline, initialVocabularyPack.terms, 5, "test-seed");
     expect(options).toHaveLength(5);
     expect(new Set(options).size).toBe(5);
     expect(options).toContain("airline");
+  });
+
+  it("changes hint distractors when the seed changes", () => {
+    const first = buildHintOptions(airline, initialVocabularyPack.terms, 5, "seed-one");
+    const second = buildHintOptions(airline, initialVocabularyPack.terms, 5, "seed-two");
+
+    expect(first).toContain("airline");
+    expect(second).toContain("airline");
+    expect(first).not.toEqual(second);
   });
 });

@@ -82,6 +82,7 @@ pub struct VocabularyTerm {
     pub id: String,
     pub block_id: String,
     pub word: String,
+    pub word_translation: Option<String>,
     pub sentence: String,
     pub translation: Option<String>,
     pub hint: Option<String>,

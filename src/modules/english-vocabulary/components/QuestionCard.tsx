@@ -13,6 +13,7 @@ interface QuestionCardProps {
   answer: string;
   hintUsed: boolean;
   hintOptions: string[];
+  optionTranslations: Record<string, string | null | undefined>;
   feedback: string | null;
   onAnswerChange: (answer: string) => void;
   onShowHint: () => void;
@@ -27,6 +28,7 @@ export function QuestionCard({
   answer,
   hintUsed,
   hintOptions,
+  optionTranslations,
   feedback,
   onAnswerChange,
   onShowHint,
@@ -35,6 +37,7 @@ export function QuestionCard({
 }: QuestionCardProps) {
   const [secondsLeft, setSecondsLeft] = useState(AUTO_CONTINUE_SECONDS);
   const hasContinuedRef = useRef(false);
+  const sentenceTranslation = hintUsed ? term.translation?.trim() : "";
 
   const continueOnce = useCallback(() => {
     if (hasContinuedRef.current) {
@@ -90,9 +93,9 @@ export function QuestionCard({
       </div>
 
       <p className="text-3xl font-black leading-tight text-ink">{term.sentence}</p>
-      {term.translation && (
-        <p className="mt-3 rounded-2xl bg-panda-gold/50 px-4 py-3 text-sm font-bold text-amber-900">
-          {term.translation}
+      {sentenceTranslation && (
+        <p className="mt-3 rounded-2xl bg-panda-gold/35 px-4 py-3 text-sm font-light text-amber-900">
+          {sentenceTranslation}
         </p>
       )}
 
@@ -106,24 +109,25 @@ export function QuestionCard({
           autoFocus
         />
 
-        {hintUsed && (
-          <div className="rounded-3xl bg-slate-50 p-4">
-            <p className="mb-3 text-sm font-black text-slate-600">Opciones de pista</p>
-            <div className="flex flex-wrap gap-2">
-              {hintOptions.map((option) => (
-                <button
-                  key={option}
-                  type="button"
-                  disabled={Boolean(feedback)}
-                  onClick={() => onAnswerChange(option)}
-                  className="rounded-full bg-white px-4 py-2 text-sm font-black text-ink shadow-sm transition hover:-translate-y-0.5 disabled:opacity-70"
-                >
-                  {option}
-                </button>
-              ))}
-            </div>
+        <div className="rounded-3xl bg-slate-50 p-4">
+          <p className="mb-3 text-sm font-black text-slate-600">Opciones</p>
+          <div className="flex flex-wrap gap-2">
+            {hintOptions.map((option) => (
+              <button
+                key={option}
+                type="button"
+                disabled={Boolean(feedback)}
+                onClick={() => onAnswerChange(option)}
+                className="rounded-full bg-white px-4 py-2 text-sm text-ink shadow-sm transition hover:-translate-y-0.5 disabled:opacity-70"
+              >
+                <span className="font-black">{option}</span>
+                {hintUsed && optionTranslations[option] && (
+                  <span className="font-light text-slate-500"> / {optionTranslations[option]}</span>
+                )}
+              </button>
+            ))}
           </div>
-        )}
+        </div>
 
         <div className="flex flex-wrap items-center gap-3">
           {!hintUsed && !feedback && (

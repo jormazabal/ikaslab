@@ -31,7 +31,12 @@ export function selectTermsForBlocks(terms: VocabularyTerm[], selectedBlockIds: 
   return terms.filter((term) => term.enabled && selected.has(term.blockId));
 }
 
-export function buildHintOptions(term: VocabularyTerm, allTerms: VocabularyTerm[], optionCount = 5): string[] {
+export function buildHintOptions(
+  term: VocabularyTerm,
+  allTerms: VocabularyTerm[],
+  optionCount = 5,
+  seed = `${term.id}-${Date.now()}-${Math.random()}`,
+): string[] {
   const normalizedCorrect = normalizeAnswer(term.word);
   const candidates = [
     ...term.distractors,
@@ -45,10 +50,13 @@ export function buildHintOptions(term: VocabularyTerm, allTerms: VocabularyTerm[
     ).values(),
   );
 
-  const selected = uniqueDistractors.slice(0, Math.max(0, optionCount - 1));
+  const selected = stableShuffle(uniqueDistractors, `${seed}-distractors`).slice(
+    0,
+    Math.max(0, optionCount - 1),
+  );
   const withCorrect = [term.word, ...selected].slice(0, optionCount);
 
-  return stableShuffle(withCorrect, term.id);
+  return stableShuffle(withCorrect, `${seed}-options`);
 }
 
 export function stableShuffle<T>(items: T[], seed: string): T[] {

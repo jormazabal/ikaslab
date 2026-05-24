@@ -15,6 +15,7 @@ export const vocabularyTermSchema = z.object({
   id: z.string().min(3).regex(/^[a-z0-9-]+$/),
   blockId: z.string().min(2),
   word: z.string().min(1).max(48),
+  wordTranslation: z.string().max(180).nullable().optional(),
   sentence: z.string().min(6).includes("___"),
   translation: z.string().max(180).nullable().optional(),
   hint: z.string().max(160).nullable().optional(),

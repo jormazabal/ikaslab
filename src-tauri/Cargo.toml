@@ -1,6 +1,6 @@
 [package]
 name = "ikaslab"
-version = "0.1.1"
+version = "0.1.2"
 description = "IkasLab educational desktop app"
 authors = ["IkasLab"]
 edition = "2021"

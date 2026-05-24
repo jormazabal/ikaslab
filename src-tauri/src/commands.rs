@@ -391,7 +391,7 @@ fn list_vocabulary_blocks(connection: &rusqlite::Connection) -> Result<Vec<Vocab
 fn list_vocabulary_terms(connection: &rusqlite::Connection) -> Result<Vec<VocabularyTerm>, String> {
     let mut statement = connection
         .prepare(
-            "SELECT id, block_id, word, sentence, translation, hint, difficulty, distractors,
+            "SELECT id, block_id, word, word_translation, sentence, translation, hint, difficulty, distractors,
                     enabled, accepted_answers
              FROM vocabulary_terms ORDER BY block_id ASC, word ASC",
         )
@@ -399,18 +399,19 @@ fn list_vocabulary_terms(connection: &rusqlite::Connection) -> Result<Vec<Vocabu
 
     let rows = statement
         .query_map([], |row| {
-            let distractors: String = row.get(7)?;
-            let accepted_answers: Option<String> = row.get(9)?;
+            let distractors: String = row.get(8)?;
+            let accepted_answers: Option<String> = row.get(10)?;
             Ok(VocabularyTerm {
                 id: row.get(0)?,
                 block_id: row.get(1)?,
                 word: row.get(2)?,
-                sentence: row.get(3)?,
-                translation: row.get(4)?,
-                hint: row.get(5)?,
-                difficulty: row.get(6)?,
+                word_translation: row.get(3)?,
+                sentence: row.get(4)?,
+                translation: row.get(5)?,
+                hint: row.get(6)?,
+                difficulty: row.get(7)?,
                 distractors: parse_string_array(&distractors),
-                enabled: row.get::<_, i64>(8)? == 1,
+                enabled: row.get::<_, i64>(9)? == 1,
                 accepted_answers: accepted_answers.map(|value| parse_string_array(&value)),
             })
         })
@@ -447,11 +448,12 @@ fn insert_term(connection: &rusqlite::Connection, term: &VocabularyTerm) -> Resu
     connection
         .execute(
             "INSERT INTO vocabulary_terms
-             (id, block_id, word, sentence, translation, hint, difficulty, distractors, enabled, accepted_answers)
-             VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10)
+             (id, block_id, word, word_translation, sentence, translation, hint, difficulty, distractors, enabled, accepted_answers)
+             VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11)
              ON CONFLICT(id) DO UPDATE SET
                block_id = excluded.block_id,
                word = excluded.word,
+               word_translation = excluded.word_translation,
                sentence = excluded.sentence,
                translation = excluded.translation,
                hint = excluded.hint,
@@ -463,6 +465,7 @@ fn insert_term(connection: &rusqlite::Connection, term: &VocabularyTerm) -> Resu
                 term.id,
                 term.block_id,
                 term.word,
+                term.word_translation,
                 term.sentence,
                 term.translation,
                 term.hint,
