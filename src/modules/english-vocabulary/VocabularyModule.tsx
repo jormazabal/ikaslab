@@ -1,0 +1,271 @@
+import { Settings, Trophy } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
+import { Link } from "react-router-dom";
+import { useAppData } from "../../app/providers/AppDataProvider";
+import type { SaveGameSessionInput } from "../../domain/sessions/types";
+import { vocabularyContentService, type VocabularyContentSnapshot } from "../../services/content/vocabularyContentService";
+import { appRepository } from "../../services/persistence/appRepository";
+import { Button } from "../../shared/ui/Button";
+import { Card } from "../../shared/ui/Card";
+import { EmptyState } from "../../shared/ui/EmptyState";
+import { BlockSelector } from "./components/BlockSelector";
+import { QuestionCard } from "./components/QuestionCard";
+import { buildHintOptions, checkAnswer, selectTermsForBlocks, stableShuffle } from "./domain/gameLogic";
+import type { VocabularyTerm } from "./domain/types";
+
+type GamePhase = "intro" | "playing" | "summary";
+
+interface AnswerRecord {
+  termId: string;
+  word: string;
+  answer: string;
+  correct: boolean;
+  points: number;
+  hintUsed: boolean;
+}
+
+export function VocabularyModule() {
+  const { currentUser, refresh, refreshProgress } = useAppData();
+  const [snapshot, setSnapshot] = useState<VocabularyContentSnapshot | null>(null);
+  const [selectedBlocks, setSelectedBlocks] = useState<string[]>([]);
+  const [phase, setPhase] = useState<GamePhase>("intro");
+  const [questions, setQuestions] = useState<VocabularyTerm[]>([]);
+  const [questionIndex, setQuestionIndex] = useState(0);
+  const [answer, setAnswer] = useState("");
+  const [hintUsed, setHintUsed] = useState(false);
+  const [feedback, setFeedback] = useState<string | null>(null);
+  const [records, setRecords] = useState<AnswerRecord[]>([]);
+  const [startedAt, setStartedAt] = useState<string>("");
+
+  useEffect(() => {
+    void vocabularyContentService.getSnapshot().then((loaded) => {
+      setSnapshot(loaded);
+      setSelectedBlocks(loaded.blocks.filter((block) => block.enabled).map((block) => block.id));
+    });
+  }, []);
+
+  const activeBlocks = useMemo(
+    () => snapshot?.blocks.filter((block) => block.enabled).sort((a, b) => a.orderIndex - b.orderIndex) ?? [],
+    [snapshot],
+  );
+
+  const currentTerm = questions[questionIndex];
+  const score = records.reduce((total, record) => total + record.points, 0);
+
+  const hintOptions = useMemo(() => {
+    if (!currentTerm || !snapshot) {
+      return [];
+    }
+
+    return buildHintOptions(currentTerm, snapshot.terms);
+  }, [currentTerm, snapshot]);
+
+  function toggleBlock(blockId: string) {
+    setSelectedBlocks((current) =>
+      current.includes(blockId) ? current.filter((id) => id !== blockId) : [...current, blockId],
+    );
+  }
+
+  function startGame() {
+    if (!snapshot || selectedBlocks.length === 0) {
+      return;
+    }
+
+    const selectedTerms = selectTermsForBlocks(snapshot.terms, selectedBlocks);
+    setQuestions(stableShuffle(selectedTerms, `${selectedBlocks.join("-")}-${Date.now()}`));
+    setQuestionIndex(0);
+    setAnswer("");
+    setHintUsed(false);
+    setFeedback(null);
+    setRecords([]);
+    setStartedAt(new Date().toISOString());
+    setPhase("playing");
+  }
+
+  function submitAnswer() {
+    if (!currentTerm) {
+      return;
+    }
+
+    const result = checkAnswer(answer, currentTerm, hintUsed);
+    setRecords((current) => [
+      ...current,
+      {
+        termId: currentTerm.id,
+        word: currentTerm.word,
+        answer: result.normalizedAnswer,
+        correct: result.isCorrect,
+        points: result.points,
+        hintUsed,
+      },
+    ]);
+    setFeedback(
+      result.isCorrect
+        ? `¡Correcto! ${result.points > 0 ? "+" : ""}${result.points} puntos`
+        : `Casi. La respuesta era "${currentTerm.word}". ${result.points} punto`,
+    );
+  }
+
+  async function continueGame() {
+    if (questionIndex + 1 < questions.length) {
+      setQuestionIndex((index) => index + 1);
+      setAnswer("");
+      setHintUsed(false);
+      setFeedback(null);
+      return;
+    }
+
+    await finishGame();
+  }
+
+  async function finishGame() {
+    if (!currentUser) {
+      return;
+    }
+
+    const endedAt = new Date().toISOString();
+    const finalRecords = records;
+    const session: SaveGameSessionInput = {
+      userId: currentUser.id,
+      moduleId: "english-vocabulary",
+      startedAt,
+      endedAt,
+      score: finalRecords.reduce((total, record) => total + record.points, 0),
+      correctCount: finalRecords.filter((record) => record.correct).length,
+      wrongCount: finalRecords.filter((record) => !record.correct).length,
+      hintsUsed: finalRecords.filter((record) => record.hintUsed).length,
+      selectedBlocks,
+      totalQuestions: questions.length,
+      data: {
+        answers: finalRecords,
+      },
+    };
+
+    await appRepository.saveSession(session);
+    await refreshProgress();
+    await refresh();
+    setPhase("summary");
+  }
+
+  if (!snapshot) {
+    return <EmptyState title="Cargando vocabulario" description="Preparando bloques y términos." />;
+  }
+
+  if (snapshot.terms.length === 0) {
+    return (
+      <EmptyState
+        title="No hay vocabulario"
+        description="Añade términos desde la configuración o restaura el vocabulario inicial."
+      />
+    );
+  }
+
+  if (phase === "playing" && currentTerm) {
+    return (
+      <div className="space-y-5">
+        <div className="flex items-center justify-between gap-3">
+          <div>
+            <p className="text-sm font-black uppercase text-panda-leaf">Vocabulario de inglés</p>
+            <h1 className="text-3xl font-black text-ink">Ronda panda</h1>
+          </div>
+          <Card className="px-5 py-3">
+            <p className="text-xs font-bold text-slate-500">Puntuación</p>
+            <p className="text-2xl font-black text-ink">{score}</p>
+          </Card>
+        </div>
+        <QuestionCard
+          term={currentTerm}
+          index={questionIndex}
+          total={questions.length}
+          answer={answer}
+          hintUsed={hintUsed}
+          hintOptions={hintOptions}
+          feedback={feedback}
+          onAnswerChange={setAnswer}
+          onShowHint={() => setHintUsed(true)}
+          onSubmit={submitAnswer}
+          onContinue={continueGame}
+        />
+      </div>
+    );
+  }
+
+  if (phase === "summary") {
+    const correct = records.filter((record) => record.correct).length;
+    return (
+      <Card className="mx-auto max-w-3xl text-center">
+        <div className="mx-auto mb-4 grid h-20 w-20 place-items-center rounded-3xl bg-panda-gold text-ink">
+          <Trophy size={42} />
+        </div>
+        <h1 className="text-4xl font-black text-ink">Resumen de partida</h1>
+        <p className="mt-3 text-lg font-bold text-slate-600">
+          Has conseguido {score} puntos con {correct} aciertos de {records.length}.
+        </p>
+        <div className="mt-6 grid gap-3 sm:grid-cols-3">
+          <div className="rounded-3xl bg-panda-mint p-4">
+            <p className="text-sm font-bold text-emerald-800">Aciertos</p>
+            <p className="text-3xl font-black text-ink">{correct}</p>
+          </div>
+          <div className="rounded-3xl bg-panda-blush p-4">
+            <p className="text-sm font-bold text-pink-800">Fallos</p>
+            <p className="text-3xl font-black text-ink">{records.length - correct}</p>
+          </div>
+          <div className="rounded-3xl bg-panda-sky p-4">
+            <p className="text-sm font-bold text-sky-800">Pistas</p>
+            <p className="text-3xl font-black text-ink">
+              {records.filter((record) => record.hintUsed).length}
+            </p>
+          </div>
+        </div>
+        <div className="mt-7 flex flex-wrap justify-center gap-3">
+          <Button onClick={() => setPhase("intro")}>Jugar otra vez</Button>
+          <Link to="/">
+            <Button variant="secondary">Volver a módulos</Button>
+          </Link>
+        </div>
+      </Card>
+    );
+  }
+
+  return (
+    <div className="space-y-8">
+      <section className="grid gap-5 lg:grid-cols-[1fr_320px]">
+        <div>
+          <p className="text-sm font-black uppercase text-panda-leaf">Idiomas</p>
+          <h1 className="text-4xl font-black text-ink">Vocabulario de inglés</h1>
+          <p className="mt-3 max-w-3xl text-lg font-bold leading-8 text-slate-600">
+            Elige bloques, completa frases con una palabra en inglés y usa pistas cuando lo
+            necesites. Sin pista sumas más puntos.
+          </p>
+        </div>
+        <Card>
+          <p className="text-sm font-bold text-slate-500">Reglas</p>
+          <ul className="mt-3 space-y-2 text-sm font-black text-ink">
+            <li>Acierto sin pista: +3</li>
+            <li>Acierto con pista: +1</li>
+            <li>Fallo: -1</li>
+          </ul>
+          <Link to="/modules/english-vocabulary/settings" className="mt-5 block">
+            <Button variant="secondary" className="w-full" icon={<Settings size={18} />}>
+              Configurar vocabulario
+            </Button>
+          </Link>
+        </Card>
+      </section>
+
+      <BlockSelector
+        blocks={activeBlocks}
+        counts={snapshot.blockCounts}
+        selectedIds={selectedBlocks}
+        onToggle={toggleBlock}
+        onSelectAll={() => setSelectedBlocks(activeBlocks.map((block) => block.id))}
+      />
+
+      <div className="flex justify-end">
+        <Button disabled={selectedBlocks.length === 0} onClick={startGame}>
+          Iniciar partida
+        </Button>
+      </div>
+    </div>
+  );
+}

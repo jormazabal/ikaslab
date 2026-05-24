@@ -1,0 +1,53 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "IkasLab",
+  "version": "0.1.0",
+  "identifier": "com.ikaslab.desktop",
+  "build": {
+    "beforeDevCommand": "npm run dev",
+    "devUrl": "http://localhost:1420",
+    "beforeBuildCommand": "npm run build",
+    "frontendDist": "../dist"
+  },
+  "app": {
+    "windows": [
+      {
+        "title": "IkasLab",
+        "width": 1180,
+        "height": 780,
+        "minWidth": 960,
+        "minHeight": 680
+      }
+    ],
+    "security": {
+      "csp": null
+    }
+  },
+  "bundle": {
+    "active": true,
+    "targets": ["nsis"],
+    "publisher": "IkasLab",
+    "shortDescription": "Aplicación educativa local para niños.",
+    "longDescription": "IkasLab es una aplicación educativa local y modular para niños.",
+    "category": "Education",
+    "createUpdaterArtifacts": true,
+    "windows": {
+      "nsis": {
+        "displayLanguageSelector": true,
+        "installerIcon": null,
+        "installMode": "currentUser"
+      }
+    }
+  },
+  "plugins": {
+    "updater": {
+      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDE5QzZEQUMzMUZERkIwNjYKUldSbXNOOGZ3OXJHR1hjWXB5SGs4RENpZiswNmNWNEVZZmxzc0dTOENvalFLb0dkZ3BRU1hHMUoK",
+      "endpoints": [
+        "https://github.com/jormazabal/ikaslab/releases/latest/download/latest.json"
+      ],
+      "windows": {
+        "installMode": "passive"
+      }
+    }
+  }
+}
