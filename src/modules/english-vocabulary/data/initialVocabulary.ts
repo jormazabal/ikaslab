@@ -6,48 +6,48 @@ export const initialVocabularyPack: VocabularyPack = {
   "blocks": [
     {
       "id": "module-1",
-      "title": "Module 1",
-      "description": "Vocabulary terms from document module 1.",
+      "title": "Turismo",
+      "description": "Viajes, aeropuertos, alojamiento, ropa y decisiones prácticas.",
       "difficulty": "easy",
       "orderIndex": 1,
       "enabled": true
     },
     {
       "id": "module-2",
-      "title": "Module 2",
-      "description": "Vocabulary terms from document module 2.",
+      "title": "Culturas",
+      "description": "Costumbres, idiomas, vida diaria, apariencia y experiencias.",
       "difficulty": "easy",
       "orderIndex": 2,
       "enabled": true
     },
     {
       "id": "module-3",
-      "title": "Module 3",
-      "description": "Vocabulary terms from document module 3.",
+      "title": "Naturaleza",
+      "description": "Medioambiente, paisajes, energía, transporte y vida salvaje.",
       "difficulty": "medium",
       "orderIndex": 3,
       "enabled": true
     },
     {
       "id": "module-4",
-      "title": "Module 4",
-      "description": "Vocabulary terms from document module 4.",
+      "title": "Mundo digital",
+      "description": "Redes, privacidad, cuentas, decisiones y retos sociales.",
       "difficulty": "medium",
       "orderIndex": 4,
       "enabled": true
     },
     {
       "id": "module-5",
-      "title": "Module 5",
-      "description": "Vocabulary terms from document module 5.",
+      "title": "Hábitats",
+      "description": "Clima, ciudad, edificios, animales y espacios naturales.",
       "difficulty": "hard",
       "orderIndex": 5,
       "enabled": true
     },
     {
       "id": "module-6",
-      "title": "Module 6",
-      "description": "Vocabulary terms from document module 6.",
+      "title": "Vida personal",
+      "description": "Familia, capacidades, responsabilidades, relaciones y hábitos.",
       "difficulty": "hard",
       "orderIndex": 6,
       "enabled": true

@@ -2,7 +2,34 @@
 
 IkasLab es una aplicación educativa de escritorio para Windows 11 construida con Tauri v2, React, TypeScript, Vite, Rust, SQLite y Tailwind CSS.
 
-La primera versión incluye perfiles para adolescentes, avatares manga, puntos, histórico de partidas, catálogo modular y el módulo completo **Vocabulario de inglés**.
+Incluye perfiles para adolescentes, avatares manga, puntos, histórico de partidas, catálogo modular y el módulo completo **Vocabulario de inglés**.
+
+## Instalación en Windows 11
+
+1. Abre la página de releases: [github.com/jormazabal/ikaslab/releases/latest](https://github.com/jormazabal/ikaslab/releases/latest).
+2. Descarga el instalador `IkasLab_0.2.0_x64-setup.exe`.
+3. Ejecuta el instalador.
+4. Abre IkasLab desde el menú Inicio.
+
+El instalador usa NSIS en modo `currentUser`, por lo que no necesita permisos de administrador. La app se instala en el perfil del usuario, bajo `%LOCALAPPDATA%`.
+
+Si Windows SmartScreen muestra un aviso, es porque el instalador todavía no tiene firma de código Windows. La actualización de Tauri sí se firma con la clave del updater.
+
+## Actualizaciones
+
+IkasLab comprueba nuevas versiones publicadas en GitHub Releases. Cuando hay una versión disponible, la app muestra un aviso para descargar e instalar la actualización.
+
+Las actualizaciones no eliminan:
+
+- usuarios;
+- avatar seleccionado;
+- configuración local;
+- vocabulario personalizado;
+- progreso;
+- puntuaciones;
+- histórico de partidas.
+
+Estos datos viven en la base de datos SQLite local del usuario, separada de los archivos instalados de la aplicación.
 
 ## Desarrollo
 
@@ -31,35 +58,54 @@ npm run tauri:build
 
 El instalador Windows está configurado con NSIS. El artefacto se genera dentro de `src-tauri/target/release/bundle/nsis`.
 
-## Publicación
+## Publicación de una release
 
-El workflow `.github/workflows/release.yml` crea una release al publicar una etiqueta `vX.Y.Z`.
+Cada release debe actualizar el README y preparar la actualización automática de las aplicaciones instaladas.
+
+Checklist:
+
+1. Actualizar versiones en `package.json`, `package-lock.json`, `src-tauri/tauri.conf.json`, `src-tauri/Cargo.toml` y `src-tauri/Cargo.lock`.
+2. Actualizar la sección de instalación del README con el nuevo instalador.
+3. Ejecutar `npm test`.
+4. Ejecutar `npm run build`.
+5. Crear commit.
+6. Crear tag `vX.Y.Z`.
+7. Subir `main` y el tag a GitHub.
+8. Confirmar que la release contiene el instalador, la firma `.sig` y `latest.json`.
+
+Ejemplo:
 
 ```bash
-git tag v0.1.0
-git push origin v0.1.0
+git tag v0.2.0
+git push origin main
+git push origin v0.2.0
 ```
 
-La release se publica con el instalador y `latest.json` para que el updater pueda detectarla.
-
-El instalador NSIS está configurado como `currentUser`, por lo que no requiere permisos de administrador en Windows 11 y se instala bajo `%LOCALAPPDATA%`.
+El workflow [.github/workflows/release.yml](.github/workflows/release.yml) crea la release con el instalador Windows y `latest.json` para que el updater pueda detectarla.
 
 ## Updater
 
-La configuración del updater está en `src-tauri/tauri.conf.json`. La app comprueba si hay una versión nueva y muestra un aviso dentro de IkasLab para descargar e instalar la actualización.
+La configuración del updater está en `src-tauri/tauri.conf.json`.
 
-Las actualizaciones reemplazan los binarios de la app, pero no eliminan la base de datos local con usuarios, avatares, configuración, progreso y puntuaciones.
+Puntos clave:
 
-Para configurar otro repositorio o rotar claves:
+- `bundle.createUpdaterArtifacts: true`
+- `bundle.windows.nsis.installMode: "currentUser"`
+- `plugins.updater.windows.installMode: "passive"`
+- endpoint `https://github.com/jormazabal/ikaslab/releases/latest/download/latest.json`
 
-1. Genera claves con `npm run tauri signer generate`.
-2. Sustituye `REPLACE_WITH_TAURI_UPDATER_PUBLIC_KEY` por la clave pública.
-3. Cambia el endpoint `OWNER/REPOSITORY` por el repositorio real.
-4. Añade estos secrets en GitHub:
-   - `TAURI_SIGNING_PRIVATE_KEY`
-   - `TAURI_SIGNING_PRIVATE_KEY_PASSWORD`
+Secrets necesarios en GitHub:
 
-La firma de código Windows es opcional al inicio, pero recomendable para reducir avisos SmartScreen.
+- `TAURI_SIGNING_PRIVATE_KEY`
+- `TAURI_SIGNING_PRIVATE_KEY_PASSWORD`
+
+Para rotar claves:
+
+```bash
+npm run tauri signer generate
+```
+
+Después hay que actualizar la clave pública en `plugins.updater.pubkey` y los secrets privados en GitHub.
 
 ## Módulos
 
@@ -87,7 +133,18 @@ El vocabulario inicial está en `src/modules/english-vocabulary/data/initialVoca
 
 El formato se valida con Zod y usa `schemaVersion: 1`.
 
-## Decisiones Técnicas
+## UI compartida
+
+Los patrones visuales reutilizables están en `src/shared/ui`.
+
+- `GlassPanel`: paneles tipo cristal.
+- `Tag`: etiquetas compactas.
+- `ChoiceButton`: opciones seleccionables.
+- `Button`: acciones principales y secundarias.
+
+La guía [AGENTS.md](AGENTS.md) indica que los futuros cambios deben reutilizar estos componentes antes de añadir estilos locales.
+
+## Decisiones técnicas
 
 - SQLite es la persistencia principal.
 - React no accede a SQL directamente.

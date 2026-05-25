@@ -59,7 +59,7 @@ export function ProfileSelectionPage() {
                   <button
                     key={user.id}
                     onClick={() => void selectUser(user.id)}
-                    className="rounded-2xl border border-manga-line bg-white/90 p-4 text-left shadow-soft transition hover:-translate-y-1 focus-visible:focus-ring"
+                    className="rounded-2xl border border-manga-line bg-white/90 p-4 text-left shadow-soft transition focus-visible:focus-ring"
                   >
                     <AvatarBadge avatarId={user.avatarId} size="lg" />
                     <h2 className="mt-3 text-xl font-black text-ink">{user.name}</h2>

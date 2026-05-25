@@ -1,8 +1,10 @@
 import { clsx } from "clsx";
-import { Check, HelpCircle, Send } from "lucide-react";
+import { HelpCircle, Send } from "lucide-react";
 import { FormEvent, useCallback, useEffect, useRef, useState } from "react";
 import { Button } from "../../../shared/ui/Button";
-import { Card } from "../../../shared/ui/Card";
+import { ChoiceButton } from "../../../shared/ui/ChoiceButton";
+import { GlassPanel } from "../../../shared/ui/GlassPanel";
+import { Tag } from "../../../shared/ui/Tag";
 import type { VocabularyTerm } from "../domain/types";
 
 const CORRECT_AUTO_CONTINUE_SECONDS = 10;
@@ -88,86 +90,76 @@ export function QuestionCard({
   }
 
   return (
-    <Card className="mx-auto max-w-3xl">
-      <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
-        <span className="rounded-full bg-cyan-50 px-4 py-2 text-sm font-black text-slate-800">
-          Pregunta {index + 1} de {total}
-        </span>
-        <span className="rounded-full bg-slate-100 px-4 py-2 text-sm font-black text-slate-600">
-          {term.difficulty}
-        </span>
-      </div>
-
-      <p className="text-xl font-black leading-tight text-ink sm:text-2xl">{term.sentence}</p>
-      {sentenceTranslation && (
-        <p className="mt-3 rounded-xl bg-amber-50 px-4 py-3 text-sm font-light text-amber-900">
-          {sentenceTranslation}
-        </p>
-      )}
-
-      <form onSubmit={handleSubmit} className="mt-4 space-y-4">
-        <div className="flex flex-wrap gap-2" role="group" aria-label="Opciones de respuesta">
-          {hintOptions.map((option) => {
-            const isSelected = answer === option;
-
-            return (
-              <button
-                key={option}
-                type="button"
-                disabled={Boolean(feedback)}
-                aria-pressed={isSelected}
-                onClick={() => onAnswerChange(option)}
-                className={clsx(
-                  "inline-flex min-h-10 items-center gap-2 rounded-full border px-4 py-2 text-sm text-ink shadow-sm transition hover:-translate-y-0.5 focus-visible:focus-ring disabled:opacity-80",
-                  isSelected
-                    ? "border-manga-cyan bg-slate-900 text-white ring-2 ring-manga-cyan/45"
-                    : "border-manga-line bg-white hover:border-manga-cyan",
-                )}
-              >
-                {isSelected && (
-                  <span className="grid h-5 w-5 place-items-center rounded-full bg-manga-cyan text-white">
-                    <Check size={14} strokeWidth={3} aria-hidden />
-                  </span>
-                )}
-                <span className="font-black">{option}</span>
-                {showTranslations && optionTranslations[option] && (
-                  <span className={clsx("font-light", isSelected ? "text-white/75" : "text-slate-500")}>
-                    / {optionTranslations[option]}
-                  </span>
-                )}
-              </button>
-            );
-          })}
+    <GlassPanel className="mx-auto max-w-3xl p-5">
+        <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+          <Tag tone="cyan" className="text-slate-800">
+            Pregunta {index + 1} de {total}
+          </Tag>
+          <Tag>
+            {term.difficulty}
+          </Tag>
         </div>
 
-        <div className="flex flex-wrap items-center gap-3">
-          {!hintUsed && !feedback && (
-            <Button type="button" variant="secondary" icon={<HelpCircle size={18} />} onClick={onShowHint}>
-              Pista
+        <p className="text-xl font-black leading-tight text-ink sm:text-2xl">{term.sentence}</p>
+        {sentenceTranslation && (
+          <p className="mt-3 rounded-xl border border-white/35 bg-amber-50/24 px-4 py-3 text-sm font-light text-amber-900 backdrop-blur-[2px]">
+            {sentenceTranslation}
+          </p>
+        )}
+
+        <form onSubmit={handleSubmit} className="mt-4 space-y-4">
+          <div className="flex flex-wrap gap-2" role="group" aria-label="Opciones de respuesta">
+            {hintOptions.map((option) => {
+              const isSelected = answer === option;
+
+              return (
+                <ChoiceButton
+                  key={option}
+                  disabled={Boolean(feedback)}
+                  selected={isSelected}
+                  onClick={() => onAnswerChange(option)}
+                  trailing={
+                    showTranslations && optionTranslations[option] ? (
+                      <span className={clsx("font-light", isSelected ? "text-white/75" : "text-slate-500")}>
+                        / {optionTranslations[option]}
+                      </span>
+                    ) : undefined
+                  }
+                >
+                  {option}
+                </ChoiceButton>
+              );
+            })}
+          </div>
+
+          <div className="flex flex-wrap items-center gap-3">
+            {!hintUsed && !feedback && (
+              <Button type="button" variant="secondary" icon={<HelpCircle size={18} />} onClick={onShowHint}>
+                Pista
+              </Button>
+            )}
+            {feedback && (
+              <div className="min-h-11 flex-1 rounded-2xl bg-cyan-50 px-5 py-3 text-base font-black text-cyan-900">
+                {feedback}
+              </div>
+            )}
+            <Button
+              type="submit"
+              disabled={!feedback && answer.trim().length === 0}
+              className={feedback ? "min-w-48 justify-between" : undefined}
+              icon={
+                feedback ? (
+                  <CountdownCircle secondsLeft={secondsLeft} totalSeconds={autoContinueSeconds} />
+                ) : (
+                  <Send size={18} />
+                )
+              }
+            >
+              {feedback ? "Continuar" : "Comprobar"}
             </Button>
-          )}
-          {feedback && (
-            <div className="min-h-11 flex-1 rounded-2xl bg-cyan-50 px-5 py-3 text-base font-black text-cyan-900">
-              {feedback}
-            </div>
-          )}
-          <Button
-            type="submit"
-            disabled={!feedback && answer.trim().length === 0}
-            className={feedback ? "min-w-48 justify-between" : undefined}
-            icon={
-              feedback ? (
-                <CountdownCircle secondsLeft={secondsLeft} totalSeconds={autoContinueSeconds} />
-              ) : (
-                <Send size={18} />
-              )
-            }
-          >
-            {feedback ? "Continuar" : "Comprobar"}
-          </Button>
-        </div>
-      </form>
-    </Card>
+          </div>
+        </form>
+    </GlassPanel>
   );
 }
 

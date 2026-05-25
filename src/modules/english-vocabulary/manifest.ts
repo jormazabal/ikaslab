@@ -1,3 +1,4 @@
+import { BookOpenText } from "lucide-react";
 import type { EducationalModuleManifest } from "../../domain/modules/types";
 import { VocabularyModule } from "./VocabularyModule";
 import { VocabularySettings } from "./VocabularySettings";
@@ -10,7 +11,7 @@ export const englishVocabularyManifest: EducationalModuleManifest = {
     "Elige bloques temáticos, responde frases con huecos, usa pistas cuando lo necesites y acumula puntos en tu perfil.",
   category: "Idiomas",
   route: "/modules/english-vocabulary",
-  icon: "📚",
+  icon: BookOpenText,
   status: "active",
   version: "0.1.0",
   storageNamespace: "modules.englishVocabulary",

@@ -1,3 +1,4 @@
+import { BookOpen, Calculator, Map } from "lucide-react";
 import type { EducationalModuleManifest } from "../domain/modules/types";
 import { PlaceholderModule } from "./placeholder/PlaceholderModule";
 import { englishVocabularyManifest } from "./english-vocabulary/manifest";
@@ -11,7 +12,7 @@ export const moduleRegistry: EducationalModuleManifest[] = [
     longDescription: "Un futuro módulo para practicar sumas, restas, multiplicaciones y cálculo.",
     category: "Matemáticas",
     route: "/modules/quick-math",
-    icon: "➕",
+    icon: Calculator,
     status: "coming-soon",
     version: "0.1.0",
     storageNamespace: "modules.quickMath",
@@ -24,7 +25,7 @@ export const moduleRegistry: EducationalModuleManifest[] = [
     longDescription: "Un futuro módulo para explorar lugares, banderas, capitales y mapas.",
     category: "Conocimiento",
     route: "/modules/geography",
-    icon: "🗺️",
+    icon: Map,
     status: "coming-soon",
     version: "0.1.0",
     storageNamespace: "modules.geography",
@@ -37,7 +38,7 @@ export const moduleRegistry: EducationalModuleManifest[] = [
     longDescription: "Un futuro módulo con textos breves, preguntas y repaso de comprensión.",
     category: "Lengua",
     route: "/modules/reading",
-    icon: "📖",
+    icon: BookOpen,
     status: "coming-soon",
     version: "0.1.0",
     storageNamespace: "modules.reading",

@@ -26,7 +26,8 @@ export const vocabularyContentService = {
       current.terms.length === 0 ||
       usesPreviousDefaultVocabulary(current) ||
       usesGenericVocabularySentences(current) ||
-      bundledDocumentVocabularyNeedsSpanishHints(current)
+      bundledDocumentVocabularyNeedsSpanishHints(current) ||
+      bundledDocumentVocabularyUsesGenericBlocks(current)
     ) {
       await appRepository.replaceVocabulary(initialVocabularyPack);
     }
@@ -99,6 +100,18 @@ function bundledDocumentVocabularyNeedsSpanishHints(pack: VocabularyPack): boole
         !term.translation?.trim() ||
         term.wordTranslation === "airelinea" ||
         term.wordTranslation === "guztitik alde egin",
+    )
+  );
+}
+
+function bundledDocumentVocabularyUsesGenericBlocks(pack: VocabularyPack): boolean {
+  return (
+    pack.terms.length === initialDocumentTermIds.size &&
+    pack.terms.every((term) => initialDocumentTermIds.has(term.id)) &&
+    pack.blocks.some(
+      (block) =>
+        /^Module \d$/.test(block.title) ||
+        /^Vocabulary terms from document module \d\.$/.test(block.description),
     )
   );
 }

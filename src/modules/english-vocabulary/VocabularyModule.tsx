@@ -6,8 +6,9 @@ import type { SaveGameSessionInput } from "../../domain/sessions/types";
 import { vocabularyContentService, type VocabularyContentSnapshot } from "../../services/content/vocabularyContentService";
 import { appRepository } from "../../services/persistence/appRepository";
 import { Button } from "../../shared/ui/Button";
-import { Card } from "../../shared/ui/Card";
 import { EmptyState } from "../../shared/ui/EmptyState";
+import { GlassPanel } from "../../shared/ui/GlassPanel";
+import { Tag } from "../../shared/ui/Tag";
 import { BlockSelector } from "./components/BlockSelector";
 import { QuestionCard } from "./components/QuestionCard";
 import { buildHintOptions, checkAnswer, selectTermsForBlocks, stableShuffle } from "./domain/gameLogic";
@@ -186,10 +187,10 @@ export function VocabularyModule() {
             <p className="text-xs font-black uppercase tracking-wide text-manga-cyan">Vocabulario de inglés</p>
             <h1 className="text-3xl font-black text-ink">Ronda de vocabulario</h1>
           </div>
-          <Card className="px-5 py-3">
+          <GlassPanel className="px-5 py-3">
             <p className="text-xs font-bold text-slate-500">Puntuación</p>
             <p className="text-2xl font-black text-ink">{score}</p>
-          </Card>
+          </GlassPanel>
         </div>
         <QuestionCard
           term={currentTerm}
@@ -216,7 +217,7 @@ export function VocabularyModule() {
   if (phase === "summary") {
     const correct = records.filter((record) => record.correct).length;
     return (
-      <Card className="mx-auto max-w-3xl text-center">
+      <GlassPanel className="mx-auto max-w-3xl p-6 text-center">
         <div className="mx-auto mb-4 grid h-16 w-16 place-items-center rounded-2xl bg-slate-900 text-white">
           <Trophy size={42} />
         </div>
@@ -246,7 +247,7 @@ export function VocabularyModule() {
             <Button variant="secondary">Volver a módulos</Button>
           </Link>
         </div>
-      </Card>
+      </GlassPanel>
     );
   }
 
@@ -261,25 +262,19 @@ export function VocabularyModule() {
             necesites. Sin pista sumas más puntos.
           </p>
         </div>
-        <Card className="self-start p-3">
+        <GlassPanel className="self-start p-3">
           <div className="flex flex-wrap items-center gap-2">
             <span className="mr-1 text-xs font-black uppercase tracking-wide text-slate-500">Reglas</span>
-            <span className="rounded-full bg-cyan-50 px-3 py-1.5 text-xs font-black text-cyan-900">
-              Sin pista +3
-            </span>
-            <span className="rounded-full bg-amber-50 px-3 py-1.5 text-xs font-black text-amber-900">
-              Con pista +1
-            </span>
-            <span className="rounded-full bg-rose-50 px-3 py-1.5 text-xs font-black text-rose-900">
-              Fallo -1
-            </span>
+            <Tag tone="cyan" className="text-xs">Sin pista +3</Tag>
+            <Tag tone="amber" className="text-xs">Con pista +1</Tag>
+            <Tag tone="rose" className="text-xs">Fallo -1</Tag>
             <Link to="/modules/english-vocabulary/settings" className="ml-auto">
               <Button variant="secondary" className="min-h-9 px-3 py-1.5" icon={<Settings size={16} />}>
                 Configurar vocabulario
               </Button>
             </Link>
           </div>
-        </Card>
+        </GlassPanel>
       </section>
 
       <BlockSelector

@@ -3,8 +3,9 @@ import { ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
 import { moduleRegistry } from "../../modules/registry";
 import { useAppData } from "../providers/AppDataProvider";
-import { Card } from "../../shared/ui/Card";
+import { GlassPanel } from "../../shared/ui/GlassPanel";
 import { StatusPill } from "../../shared/ui/StatusPill";
+import { Tag } from "../../shared/ui/Tag";
 
 export function HomePage() {
   const { currentUser, progress } = useAppData();
@@ -25,12 +26,13 @@ export function HomePage() {
           const moduleProgress = progress.find((item) => item.moduleId === module.id);
           const summary = module.getDashboardSummary?.(moduleProgress) ?? [];
           const isEnabled = module.status === "active";
+          const ModuleIcon = module.icon;
 
           const content = (
-            <Card
+            <GlassPanel
               className={clsx(
-                "group relative flex min-h-36 overflow-hidden p-0 transition hover:-translate-y-0.5 hover:border-manga-cyan/70",
-                isEnabled ? "bg-white/92" : "bg-white/72",
+                "group flex min-h-36 p-0 transition hover:border-manga-cyan/70",
+                !isEnabled && "opacity-85",
               )}
             >
               <div
@@ -44,13 +46,11 @@ export function HomePage() {
                   <div className="flex min-w-0 items-start gap-3">
                     <div
                       className={clsx(
-                        "grid h-11 w-11 shrink-0 place-items-center rounded-xl text-xl text-white shadow-sm",
-                        isEnabled
-                          ? "bg-gradient-to-br from-slate-950 to-manga-cyan"
-                          : "bg-gradient-to-br from-slate-800 to-slate-500",
+                        "grid h-11 w-11 shrink-0 place-items-center rounded-xl shadow-sm",
+                        isEnabled ? "bg-slate-950 text-manga-cyan" : "bg-slate-700 text-white/85",
                       )}
                     >
-                      {module.icon}
+                      <ModuleIcon width={22} height={22} strokeWidth={2.35} aria-hidden />
                     </div>
                     <div className="min-w-0">
                       <p className="text-xs font-black uppercase tracking-wide text-manga-cyan">
@@ -69,18 +69,18 @@ export function HomePage() {
                   <div className="flex flex-wrap gap-2">
                     {summary.length > 0 ? (
                       summary.map((item) => (
-                        <span
+                        <Tag
                           key={item.label}
-                          className="inline-flex items-center gap-2 rounded-full bg-slate-50 px-3 py-1.5 text-xs font-black text-slate-600"
+                          className="gap-2 text-xs"
                         >
                           {item.label}
                           <strong className="text-sm text-ink">{item.value}</strong>
-                        </span>
+                        </Tag>
                       ))
                     ) : (
-                      <span className="rounded-full bg-slate-50 px-3 py-1.5 text-xs font-black text-slate-500">
+                      <Tag className="text-xs text-slate-500">
                         Sin progreso
-                      </span>
+                      </Tag>
                     )}
                   </div>
 
@@ -104,7 +104,7 @@ export function HomePage() {
                   </div>
                 </div>
               </div>
-            </Card>
+            </GlassPanel>
           );
 
           return isEnabled ? (

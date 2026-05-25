@@ -12,6 +12,8 @@ export function AppShell({ children }: { children: ReactNode }) {
   const location = useLocation();
   const inSettings = location.pathname.includes("/settings");
   const avatar = currentUser ? getAvatarById(currentUser.avatarId) : undefined;
+  const headerActionClass =
+    "inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-transparent !p-0 text-ink/90 transition hover:bg-white/70 hover:text-ink focus-visible:focus-ring";
 
   return (
     <div className="relative min-h-screen overflow-hidden manga-bg">
@@ -31,7 +33,8 @@ export function AppShell({ children }: { children: ReactNode }) {
         </div>
       )}
 
-      <header className="sticky top-0 z-20 border-b border-manga-line/80 bg-white/86 backdrop-blur-xl">
+      <header className="sticky top-0 z-20 border-b border-slate-900/30 bg-transparent shadow-md backdrop-blur-[2px]">
+        <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-slate-100/20 via-slate-500/20 to-slate-950/20" />
         <div className="relative mx-auto flex max-w-7xl items-center justify-between gap-4 px-5 py-3">
           <Link to="/" className="flex min-w-0 items-center gap-3">
             <BrandLogo size="sm" />
@@ -46,18 +49,18 @@ export function AppShell({ children }: { children: ReactNode }) {
             )}
             <Link
               to="/"
-              className="inline-flex min-h-10 items-center justify-center rounded-xl border border-manga-line bg-white/92 px-3 py-2 text-ink shadow-sm transition hover:border-manga-cyan focus-visible:focus-ring"
+              className={headerActionClass}
               title="Inicio"
             >
               <Home size={18} />
             </Link>
             {inSettings && (
-              <Button variant="ghost" className="hidden px-3 sm:inline-flex" disabled>
+              <Button variant="ghost" className={`${headerActionClass} hidden sm:inline-flex`} disabled>
                 <Settings size={18} />
               </Button>
             )}
-            <Button variant="ghost" className="px-3" onClick={clearCurrentUser} title="Cambiar usuario">
-              <LogOut size={18} />
+            <Button variant="ghost" className={headerActionClass} onClick={clearCurrentUser} title="Cambiar usuario">
+              <LogOut size={22} strokeWidth={2.2} />
             </Button>
           </div>
         </div>

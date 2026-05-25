@@ -1,6 +1,8 @@
 import { Check } from "lucide-react";
 import type { VocabularyBlock } from "../domain/types";
-import { Card } from "../../../shared/ui/Card";
+import { Button } from "../../../shared/ui/Button";
+import { GlassPanel } from "../../../shared/ui/GlassPanel";
+import { Tag } from "../../../shared/ui/Tag";
 
 interface BlockSelectorProps {
   blocks: VocabularyBlock[];
@@ -15,13 +17,14 @@ export function BlockSelector({ blocks, counts, selectedIds, onToggle, onSelectA
     <div className="space-y-4">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <h2 className="text-xl font-black text-ink">Bloques temáticos</h2>
-        <button
+        <Button
           type="button"
+          variant="secondary"
           onClick={onSelectAll}
-          className="rounded-full bg-white px-4 py-2 text-sm font-black text-ink shadow-sm transition hover:-translate-y-0.5"
+          className="min-h-9 px-4 py-1.5"
         >
           Seleccionar todos
-        </button>
+        </Button>
       </div>
       <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
         {blocks.map((block) => {
@@ -33,11 +36,11 @@ export function BlockSelector({ blocks, counts, selectedIds, onToggle, onSelectA
               onClick={() => onToggle(block.id)}
               className="rounded-2xl text-left focus-visible:focus-ring"
             >
-              <Card
+              <GlassPanel
                 className={
                   selected
-                    ? "min-h-[96px] border-manga-cyan bg-cyan-50 p-3 ring-2 ring-manga-cyan/25"
-                    : "min-h-[96px] p-3 hover:-translate-y-1"
+                    ? "min-h-[96px] border-manga-cyan bg-cyan-50/20 p-3 ring-2 ring-manga-cyan/25"
+                    : "min-h-[96px] p-3"
                 }
               >
                 <div className="flex items-start gap-3">
@@ -48,9 +51,9 @@ export function BlockSelector({ blocks, counts, selectedIds, onToggle, onSelectA
                     <div className="flex items-start justify-between gap-3">
                       <h3 className="truncate text-lg font-black text-ink">{block.title}</h3>
                       <div className="flex shrink-0 items-center gap-2">
-                        <span className="rounded-full bg-white px-3 py-1 text-xs font-black text-slate-600">
+                        <Tag className="text-xs">
                           {counts[block.id] ?? 0} términos
-                        </span>
+                        </Tag>
                         {selected && (
                           <span
                             className="grid h-7 w-7 place-items-center rounded-full bg-manga-cyan text-white shadow-sm"
@@ -66,7 +69,7 @@ export function BlockSelector({ blocks, counts, selectedIds, onToggle, onSelectA
                     </p>
                   </div>
                 </div>
-              </Card>
+              </GlassPanel>
             </button>
           );
         })}

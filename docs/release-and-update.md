@@ -22,7 +22,17 @@ src-tauri/target/release/bundle/nsis/
 
 El workflow `.github/workflows/release.yml` se ejecuta con tags `v*.*.*` o manualmente.
 
-Usa `tauri-apps/tauri-action@v1`, que puede crear releases, subir artefactos y generar `latest.json` para el updater.
+Usa `tauri-apps/tauri-action@v0`, que puede crear releases, subir artefactos y generar `latest.json` para el updater.
+
+Checklist obligatorio antes de publicar:
+
+1. Actualizar versiones en `package.json`, `package-lock.json`, `src-tauri/tauri.conf.json`, `src-tauri/Cargo.toml` y `src-tauri/Cargo.lock`.
+2. Actualizar la sección principal de instalación del `README.md` con el nuevo instalador.
+3. Ejecutar `npm test`.
+4. Ejecutar `npm run build`.
+5. Crear commit y tag `vX.Y.Z`.
+6. Subir `main` y el tag.
+7. Verificar que la release contiene `.exe`, `.sig` y `latest.json`.
 
 ## Updater
 

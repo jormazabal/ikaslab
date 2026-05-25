@@ -1,4 +1,4 @@
-import type { ComponentType } from "react";
+import type { ComponentType, SVGProps } from "react";
 
 export type ModuleStatus = "active" | "coming-soon" | "disabled";
 
@@ -25,7 +25,7 @@ export interface EducationalModuleManifest {
   longDescription?: string;
   category: string;
   route: string;
-  icon: string;
+  icon: ComponentType<SVGProps<SVGSVGElement>>;
   status: ModuleStatus;
   version: string;
   storageNamespace: string;
